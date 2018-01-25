@@ -1,0 +1,5 @@
+
+config interface 'dhcp_0'
+	option middle 'middle0'
+	option end 'end0'
+	option start ''

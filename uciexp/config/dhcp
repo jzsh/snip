@@ -1,0 +1,9 @@
+
+config dhcp 'dhcp_0'
+	option interface 'vlan1'
+	option enable '1'
+	option leasetime '1440m'
+	option start_ip '192.168.1.100'
+	option end_ip '192.168.1.149'
+	list dhcp_option '6,192.168.1.1'
+	list dhcp_option '4,192.168.4.1'

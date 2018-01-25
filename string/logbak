@@ -1,0 +1,34 @@
+
+Smart Licensing Status
+======================
+
+Smart Licensing is ENABLED
+
+Registration:
+  Status: UNREGISTERED
+  Export-Controlled Functionality: Not Allowed
+
+License Authorization: 
+  Status: EVAL MODE
+  Evaluation Period Remaining: 86 days, 23 hours, 58 minutes, 14 seconds
+
+License Usage
+==============
+
+(AVC_Webfilter):
+  Description: 
+  Count: 1
+  Version: 1.0
+  Status: EVAL MODE
+
+Product Information
+===================
+UDI: PID:RV260,SN:123456789SP,HOSTID:7f0100,MAC:EC:BD:1D:44:52:FD
+
+Agent Version
+=============
+Smart Agent for Licensing: 1.4.0_rel/11
+Component Versions: 1.0
+
+
+

@@ -1,0 +1,13 @@
+Hello
+	install/remove kernel module
+
+dropHook:
+	netfilter hook that drop all packages
+
+
+===============
+some referenece:
+
+http://heapspray.net/post/writing-a-netfilter-linux-kernel-module-for-3xx-kernels/
+http://web.engr.illinois.edu/~caesar/courses/CS498.S12/labs/lab6.pdf
+http://www.linuxfocus.org/English/February2005/article367.shtml
