@@ -3,14 +3,14 @@
 
 int parseStr()
 {
-	char status[64] = "  abd-efg - ijk--lmn";
+	char status[64] = "  abd-efg - ijk--abci\n";
 	int len = strlen(status);
 	char *buf = status;
-	char *cp = NULL, *tmp = NULL, *sep = " -\n";
+	char *cp = NULL, *tmp = NULL, *sep = " -";
 
-	printf("Parsing string: %s\n"
-	       "sep           :  -\\n"
-		   "\n-------------------\n", status);
+	printf("source string: |%s|\n"
+	       "sep          : |-\\n|"
+		   "\n", status);
 
 	cp = strtok_r(buf, sep, &tmp);
 	printf("cp=%s|, tmp=%s|\n", cp, tmp);
@@ -28,12 +28,16 @@ int parseStr()
 	printf("cp=%s|, tmp=%s|\n", cp, tmp);
 
 	cp = strtok_r(NULL, sep, &tmp);
-	tmp = NULL;
 	printf("cp=%s|, tmp=%s|\n", cp, tmp);
 
-	printf("last char=%p\n", (buf+len));
+	cp = strtok_r(NULL, sep, &tmp);
+	printf("cp=%s|, tmp=%s|\n", cp, tmp);
+
+	printf("last char=%c\n", *(buf+len-1));
+	printf("------End of parseStr --------\n");
 	return 0;
 }
+
 int main(void)
 {
 	FILE *fp = fopen("log", "r");

@@ -48,19 +48,30 @@ void symlink_test(char *src_path, char *dst_path)
 		printf("Create link %s -> %s\n", src_path, dst_path);
 	
 }
-static int get_file_size_time(const char *filename) {
+
+/* stat() stats the file pointed to by path and fills in buf.
+ * lstat() is identical to stat(), except that if path is a symbolic link,
+ * then the link itself is stat-ed, not the file that it refers to.
+ * In other words, the stat call will follow the symbolic link to the target file
+ * and retrieve the information for that. Try using lstat instead, it will give
+ * you the information for the link.
+ */
+static int get_file_size_time(const char *filename)
+{
 	struct stat statbuf;
-	if (stat(filename, &statbuf) == -1) {
+	if (lstat(filename, &statbuf) == -1) { // use lstat for link file itself
 		printf("Get stat on %s Error：%s\n",
 				filename, strerror(errno));
 		return (-1);
 	}
-	if (S_ISDIR(statbuf.st_mode)) return (1);
-	if (S_ISREG(statbuf.st_mode))
-		printf("%s size：%ld bytes\tmodified at %s",
-			filename, statbuf.st_size, ctime(&statbuf.st_mtime));
+	if (S_ISDIR(statbuf.st_mode)) printf("%s directory\n", filename);
+	if (S_ISREG(statbuf.st_mode)) printf("%s regular file\n", filename);
+	if (S_ISLNK(statbuf.st_mode)) printf("%s simbolic link\n", filename);
+	
+	printf("%s size：%ld bytes\tmodified at %s\n", filename, statbuf.st_size, ctime(&statbuf.st_mtime));
 	return (0);
 }
+
 int listDir(char *path)  //main函数的argv[1] char * 作为 所需要遍历的路径 传参数给listDir
 {
 	DIR		 *pDir ;  //定义一个DIR类的指针
@@ -88,7 +99,7 @@ int listDir(char *path)  //main函数的argv[1] char * 作为 所需要遍历的
 		}
 		else //如果读取的d_type类型不是 DT_DIR, 即读取的不是目录，而是文件，则直接输出 d_name, 即输出文件名
 		{
-			get_file_size_time(childpath);
+			// get_file_size_time(childpath);
 		}
 	}
 // 	printf("Leaving Directory :%s\n", path);
@@ -96,15 +107,16 @@ int listDir(char *path)  //main函数的argv[1] char * 作为 所需要遍历的
 
 int main(int argc,char *argv[])
 {
-	listDir(argv[1]);
-	printf("\nTest symlink:\n");
-	symlink_test("nonempty-dir", "lnk2_nonempty-dir");
+	get_file_size_time(argv[1]);
+	// listDir(argv[1]);
+	// printf("\nTest symlink:\n");
+	// symlink_test("nonempty-dir", "lnk2_nonempty-dir");
 
-	printf("\nTest unlink:\n");
-	unlink_test("nonempty-dir");
-	unlink_test("empty-dir");
-	unlink_test("lnk_nonempty-dir");
-	unlink_test("lnk_empty-dir");
+	// printf("\nTest unlink:\n");
+	// unlink_test("nonempty-dir");
+	// unlink_test("empty-dir");
+	// unlink_test("lnk_nonempty-dir");
+	// unlink_test("lnk_empty-dir");
 
 	//
 // 	if (S_ISLNK("link2")) {
