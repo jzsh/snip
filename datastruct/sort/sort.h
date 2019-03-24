@@ -1,6 +1,11 @@
 #ifndef SORT_H
 #define SORT_H
+
+#define N 1000
+#define MIN 0
+#define MAX (2*N)
 #define ElementType int
+
 
 void BuildinSort(ElementType A[], int ArrSize);
 void InsertionSort(ElementType A[], int ArrSize);

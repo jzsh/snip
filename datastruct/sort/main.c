@@ -2,41 +2,42 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <syslog.h>
-#include "sort.h"
-#include "util.h"
-#include "paras.h"
+#include <time.h>
 
-void pr_array(int A[], int length)
+#include <sort.h>
+#include <util.h>
+
+
+void print_array(int A[], int length)
 {
 	int i;
-	static int flag = 0;
-	static int A1[N];
+	for(i = 0; i < length; i++) {
+		printf("%d,", A[i]);
+	}
+	printf("\n");
+}
 
-	if(flag == 1) {
-		for(i = 0; i < length; i++) {
-			if(A1[i] != A[i]) {
-				info("Error sorted");
-				flag = 0;
-				break;
-			}
+int is_sort_failed(int A[], int length)
+{
+	int i;
+	for(i = 1; i < length; i++) {
+		if(A[i] < A[i - 1]) {
+			/* sort failed */
+			return 1;
 		}
 	}
-	if(flag == 0) {
-		for(i = 0; i < length; i++) {
-			printf("%d, ", A[i]);
-			A1[i] = A[i];
-		}
-		printf("\n");
-		flag = 1;
-	}
+	return 0;
 }
 
 void gen_array(int A[], int size)
 {
 	int i;
+	printf("Origin array:\n");
 	for(i = 0; i < size; i++) {
 		A[i] = rand() % MAX;
+		printf("%d,", A[i]);
 	}
+	printf("\n");
 }
 
 void copy_array(int A[], int size, int A2[])
@@ -59,9 +60,15 @@ void test_sort(ElementType A[], int size, struct sortMethods *sort_method)
 	copy_array(A, size, array);
 	timer_start(sort_method->name);
 	(sort_method->sort)(array, sizeof(array)/sizeof(array[0]));
-	info("Method:%s, \t Time:%lf",
-			sort_method->name, timer_stop(sort_method->name));
-	pr_array(array, size);
+
+	if(is_sort_failed(array, size) == 1) {
+		printf("Method:%s Failed!\n", sort_method->name);
+		print_array(A, size);
+		print_array(array, size);
+	} else {
+		info("Method:%s, \t Time:%lf",
+				sort_method->name, timer_stop(sort_method->name));
+	}
 }
 
 int main()

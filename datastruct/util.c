@@ -1,62 +1,32 @@
 #include "util.h"
 
-#define INFO_LOG_STDERR (1<<0)
-#define INFO_LOG_SYSLOG (1<<1)
-
-int loglvl = INFO_LOG_STDERR;
-
 void info(const char *fmt, ...)
 {
 	va_list ap;
-
 	va_start(ap, fmt);
-	if((loglvl & INFO_LOG_STDERR) !=0) {
-		vfprintf(stderr, fmt, ap);
-		fprintf(stderr, "\n");
-	}
-	va_end(ap);
-
-	va_start(ap, fmt);
-	if((loglvl & INFO_LOG_SYSLOG) != 0) {
-		vsyslog(LOG_INFO, fmt, ap);
-	}
+	vfprintf(stderr, fmt, ap);
+	fprintf(stderr, "\n");
 	va_end(ap);
 }
 
 void error(const char *fmt, ...)
 {
 	va_list ap;
-
 	va_start(ap, fmt);
-	if((loglvl & INFO_LOG_STDERR) !=0) {
-		vfprintf(stderr, fmt, ap);
-		fprintf(stderr, "\n");
-	}
-	va_end(ap);
-
-	va_start(ap, fmt);
-	if((loglvl & INFO_LOG_SYSLOG) != 0) {
-		vsyslog(LOG_ERR, fmt, ap);
-	}
+	vfprintf(stderr, fmt, ap);
+	fprintf(stderr, "\n");
 	va_end(ap);
 }
 
-void FatalError(const char *fmt, ...)
+void fail(const char *fmt, ...)
 {
 	va_list ap;
 
 	va_start(ap, fmt);
-	if((loglvl & INFO_LOG_STDERR) !=0) {
-		vfprintf(stderr, fmt, ap);
-		fprintf(stderr, "\n");
-	}
+	vfprintf(stderr, fmt, ap);
+	fprintf(stderr, "\n");
 	va_end(ap);
 
-	va_start(ap, fmt);
-	if((loglvl & INFO_LOG_SYSLOG) != 0) {
-		vsyslog(LOG_CRIT, fmt, ap);
-	}
-	va_end(ap);
 	exit(1);
 }
 

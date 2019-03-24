@@ -9,14 +9,13 @@ void main(void)
 {
 	openlog ("mylibrary", 0, 0);
 	
-
 	int n = 0;	
 	unsigned char mes[64];
-	while(1) {
+	while(n < 5) {
 		syslog(LOG_INFO, "[%d] This is a test message", n);
 		n++;
 		sleep(2);
-		closelog ();
 	}
+	closelog ();
 	
 }

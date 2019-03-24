@@ -1,21 +1,25 @@
 #include <stdlib.h>
 #include <string.h>
 #include "sort.h"
-#include "paras.h"
+
 
 void InsertionSort(ElementType A[], int ArrSize)
 {
 	int j, p;
-	ElementType inser;
+	ElementType in; // num to be inserted
 
 	for(p = 1; p < ArrSize; p++) {
-		inser = A[p]; /* insert A[p] to A[0 ~ p-1]*/
-		for(j = p; j > 0 && A[j-1] > inser; j--)
-			A[j] = A[j-1];
-		A[j] = inser;
+		in = A[p]; /* inertt A[p] to A[0 ~ p-1]*/
+		for(j = p; j > 0 && A[j-1] > in; j--)
+			A[j] = A[j-1]; // right shift for in
+		A[j] = in;
 	}
 }
 
+/* 希尔排序是一种插入排序，又称缩小增量排序, 基于以下2点性质改进：
+ * 1. 插入排序在对几乎已经排好序的数据操作时，效率高，即可以达到线性排序的效率。
+ * 2. 但插入排序一般来说是低效的，因为插入排序每次只能将数据移动一位。
+ * */
 void ShellSort(ElementType A[], int ArrSize)
 {
 	int i, j, increment;
@@ -34,11 +38,13 @@ void ShellSort(ElementType A[], int ArrSize)
 	}
 }
 
+/* 冒泡排序
+ * 每一趟, 把还未排序中的最小的值移动到数组前 */
 void BubleSort(ElementType A[], int ArrSize)
 {
 	int i, j, tmp;
 
-	for(i = 0; i < ArrSize -1; i++) {
+	for(i = 0; i < ArrSize - 1; i++) {
 		for(j = ArrSize - 1; j > i; j--) {
 			if(A[j] < A[j - 1]) {
 				tmp = A[j];
@@ -106,6 +112,7 @@ ElementType Median3(ElementType A[], int left, int right)
 }
 
 #define Cutoff (3)
+// 交换法
 void Qsort(ElementType A[], int left, int right)
 {
 	int i, j;
@@ -123,6 +130,7 @@ void Qsort(ElementType A[], int left, int right)
 			else
 				break;
 		}
+		// 當i,j指针重合时，交换此重合点与pivot元素
 		swap(&A[i], &A[right - 1]); /* restore pivot */
 		Qsort(A, left, i - 1);
 		Qsort(A, i + 1, right);
@@ -130,42 +138,54 @@ void Qsort(ElementType A[], int left, int right)
 	else /* Do an insertion sort on the subarray */
 		InsertionSort(A + left, right - left + 1);
 }
+
 void QuickSort(ElementType A[], int ArrSize)
 {
 	Qsort(A, 0, ArrSize - 1);
 }
 
+// 挖坑法
 void qsort2(int a[], int left,int right)
 {
-	int i,j,t,pivot;
+	int i,j,pivot,index;
 	if(left > right)
 	   return;
 
-	pivot = a[left]; //pivot中存的就是基准数
 	i = left;
-	j = right;
-	while(i != j)
-	{
-		//顺序很重要，要先从右边开始找
-		while(a[j]>=pivot && i<j)
-			j--;
-		//再找右边的
-		while(a[i]<=pivot && i<j)
-			i++;
-		//交换两个数在数组中的位置
-		if(i<j)
-		{
-			t=a[i];
-			a[i]=a[j];
-			a[j]=t;
-		}
-	}
-	//最终将基准数归位
-	a[left]=a[i];
-	a[i]=pivot;
+ 	j = right;
+	pivot = a[left]; //pivot中存的就是基准数
+	index = left;
 
-	qsort2(a, left,i-1);//继续处理左边的，这里是一个递归的过程
-	qsort2(a, i+1,right);//继续处理右边的 ，这里是一个递归的过程
+	while(i < j)
+	{
+		// 1. 顺序很重要，要先从右边开始找, 找一个小于基准的数
+		while(i < j) {
+			if(a[j] < pivot) {
+				a[index] = a[j];
+				index = j;
+				i++;
+				break;
+			}
+			j--;
+		}
+
+		// 2. 再找左边的, 找一个大于基准的数
+		while(i < j) {
+			if(a[i] > pivot) {
+				a[index] = a[i];
+				index = i;
+				j--;
+				break;
+			}
+			i++;
+		}
+
+	}
+	// 3. 最终将基准数归位
+	a[index] = pivot;
+
+	qsort2(a, left,index-1);//继续处理左边的，这里是一个递归的过程
+	qsort2(a, index+1,right);//继续处理右边的 ，这里是一个递归的过程
 }
 
 void QuickSort2(ElementType A[], int ArrSize)

@@ -8,6 +8,6 @@
 
 void info(const char *fmt, ...);
 void error(const char *fmt, ...);
-void FatalError(const char *fmt, ...);
+void fail(const char *fmt, ...);
 void timer_start(const char *event);
 double timer_stop(const char *event);
