@@ -1,4 +1,4 @@
-CFLAGS+=-Wall -Werror -g -O0 -I.. -I.
+CFLAGS+=-Wall -Werror -g -O0 -I.. -I. -std=c99
 
 all: sort.c main.c util.o
 	gcc $^ $(CFLAGS)

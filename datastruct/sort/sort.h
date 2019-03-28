@@ -15,4 +15,6 @@ void SelectSort(ElementType A[], int ArrSize);
 void QuickSort(ElementType A[], int ArrSize);
 void QuickSort2(ElementType A[], int ArrSize);
 void BucketSort(ElementType A[], int ArrSize);
+void MergeSort(ElementType A[], int ArrSize);
+void HeapSort(ElementType A[], int ArrSize);
 #endif

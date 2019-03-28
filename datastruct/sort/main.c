@@ -83,6 +83,8 @@ int main()
 						{.name = "QuickSort", .sort = QuickSort},
 						{.name = "QuickSort2", .sort = QuickSort2},
 						{.name = "BucketSort", .sort = BucketSort},
+						{.name = "MergeSort", .sort = MergeSort},
+						{.name = "HeapSort", .sort = HeapSort},
 	};
 
 	int A[N];
