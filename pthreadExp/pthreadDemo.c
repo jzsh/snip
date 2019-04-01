@@ -2,7 +2,9 @@
 #include <stdio.h>
 #include <unistd.h>
 
-pthread_mutex_t mutex ;
+pthread_mutex_t count_mutex ;
+int count;
+
 void *print_msg(void *arg){
     int i=0;
     int thread_num = (int)arg;
@@ -13,22 +15,21 @@ void *print_msg(void *arg){
         sleep(2);
     }
 
-    pthread_mutex_lock(&mutex);
-    for(i=0;i<15;i++){
-        printf("Thread %d: output %d\n", thread_num, i);
-        usleep(10000);
-    }
-    pthread_mutex_unlock(&mutex);
+    pthread_mutex_lock(&count_mutex); // 进入关键区域，进程先获得锁
+    count++;
+    printf("Thread %d: output %d\n", thread_num, count);
+    usleep(10000);
+    pthread_mutex_unlock(&count_mutex);
 }
 
 int main(int argc,char** argv) {
     pthread_t id1;
     pthread_t id2;
-    pthread_mutex_init(&mutex,NULL);
+    pthread_mutex_init(&count_mutex,NULL);
     pthread_create(&id1,NULL,print_msg,(void *)1);
     pthread_create(&id2,NULL,print_msg,(void *)2);
     pthread_join(id1,NULL); // wait thread terminate, if not main thread exit
     pthread_join(id2,NULL);
-    pthread_mutex_destroy(&mutex);
+    pthread_mutex_destroy(&count_mutex);
     return 1;
 }

@@ -1,4 +1,5 @@
+pthreadDemo:
+	gcc -o $@ pthreadDemo.c -lpthread
 all:
-	gcc pthreadDemo.c -lpthread
 	gcc con.c -lpthread -std=c99
 
