@@ -31,6 +31,7 @@ int main()
                 perror("connect error");
                 return -1;
         }
+
         while(strcmp(buffer,"q")!=0)
         {
                 scanf("%s",buffer);
