@@ -7,7 +7,7 @@ int count;
 
 void *print_msg(void *arg){
     int i=0;
-    int thread_num = (int)arg;
+    int thread_num = *((int *)arg);
     printf("Thread %d is starting\n", thread_num);
     if(thread_num == 1) {
         sleep(1);
@@ -23,11 +23,13 @@ void *print_msg(void *arg){
 }
 
 int main(int argc,char** argv) {
+	int th1 = 1;
+	int th2 = 2;
     pthread_t id1;
     pthread_t id2;
     pthread_mutex_init(&count_mutex,NULL);
-    pthread_create(&id1,NULL,print_msg,(void *)1);
-    pthread_create(&id2,NULL,print_msg,(void *)2);
+    pthread_create(&id1,NULL,print_msg,(void *)&th1);
+    pthread_create(&id2,NULL,print_msg,(void *)&th2);
     pthread_join(id1,NULL); // wait thread terminate, if not main thread exit
     pthread_join(id2,NULL);
     pthread_mutex_destroy(&count_mutex);

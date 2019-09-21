@@ -3,13 +3,15 @@
 #include "sort.h"
 
 
+/* 插入法
+ * */
 void InsertionSort(ElementType A[], int ArrSize)
 {
     int j, p;
     ElementType in; // num to be inserted
 
     for(p = 1; p < ArrSize; p++) {
-        in = A[p]; /* inertt A[p] to A[0 ~ p-1]*/
+        in = A[p]; /* 插入A[p]到已排序好的数组A[0 ~ p-1]中 */
         for(j = p; j > 0 && A[j-1] > in; j--)
             A[j] = A[j-1]; // right shift for in
         A[j] = in;
@@ -39,7 +41,8 @@ void ShellSort(ElementType A[], int ArrSize)
 }
 
 /* 冒泡排序
- * 每一趟, 把还未排序中的最小的值移动到数组前 */
+ * 每一趟, 把还未排序中的最小的值移动到数组前
+ * 相邻两元素比较 */
 void BubleSort(ElementType A[], int ArrSize)
 {
     int i, j, tmp;
@@ -235,17 +238,26 @@ void MergeSort(ElementType A[], int ArrSize)
     }
 }
 
-// ------------------------
-// 堆排序
-// a.将无需序列构建成一个堆，根据升序降序需求选择大顶堆或小顶堆;
-// b.将堆顶元素与末尾元素交换，将最大元素"沉"到数组末端;
-// c.重新调整结构，使其满足堆定义，然后继续交换堆顶元素与当前末尾元素，
-// 反复执行调整+交换步骤，直到整个序列有序。
+/* 堆排序
+完全二叉树： 除了最后一层之外的其他每一层都被完全填充，并且所有结点都保持向左对齐
+
+         0
+       /    \
+      1     2
+     / \   /  \
+    3   4 5    6
+左边子节点位置 = 当前父节点的两倍 + 1，右边子节点位置 = 当前父节点的两倍 + 2
+
+a.将无需序列构建成一个堆，根据升序降序需求选择大顶堆或小顶堆;
+b.将堆顶元素与末尾元素交换，将最大元素"沉"到数组末端;
+c.重新调整结构，使其满足堆定义，然后继续交换堆顶元素与当前末尾元素，
+反复执行调整+交换步骤，直到整个序列有序。
+*/
 
 void adjustHeap(ElementType A[], int i, int length)
 {
     int tmp = A[i];
-    for(int k=i*2+1; k < length; k=k*2+1) {
+    for(int k=i*2+1; k < length; k=k*2+1/*子节点*/) {
         if(k+1 < length && A[k] < A[k+1]) // 如果左子结点小于右子结点，k指向右子结点
         {
             k++;
@@ -264,7 +276,7 @@ void HeapSort(ElementType A[], int ArrSize)
 {
     // 构建大顶堆
     for(int i = ArrSize/2 - 1; i>=0; i--) {
-        // 从第一个非叶子结点从下至上，从右至左调整结构
+        // 从第一个非叶子结点(下标为ArrSize/2-1), 从下至上，从右至左调整结构
         adjustHeap(A, i, ArrSize);
     }
 

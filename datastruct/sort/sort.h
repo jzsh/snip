@@ -1,7 +1,7 @@
 #ifndef SORT_H
 #define SORT_H
 
-#define N 1000
+#define N 10000
 #define MIN 0
 #define MAX (2*N)
 #define ElementType int
