@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 int binarySearch(int a[], int len, int key)
 {
@@ -17,15 +19,31 @@ int binarySearch(int a[], int len, int key)
     return -1;
 }
 
+int comp(const void *elem1, const void *elem2)
+{
+    int f = *((int *)elem1);
+    int s = *((int *)elem2);
+    if(f > s) return 1;
+    if(f < s) return -1;
+    return 0;
+}
+
 int main()
 {
     int i;
     int N = 50;
     int a[N];
+	unsigned int cur = (unsigned int)time(NULL);
+
     for(i = 0; i < N; i++)
     {
-        a[i] = rand() % 100;
-        printf("%d,", a[i]);
+        a[i] = rand_r(&cur) % 100;
+    }
+    qsort(a, N, sizeof(a[0]), comp);
+
+    for(i = 0; i < N; i++)
+    {
+    	printf("%d,", a[i]);
     }
     printf("\n");
 
