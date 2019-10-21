@@ -1,7 +1,22 @@
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include "sort.h"
 
+
+#ifdef __DEBUG
+static void show(int  arr[], int n)
+{
+    int i;
+    printf("(");
+    for ( i=0; i<n; i++ )
+        printf("%d  ", arr[i]);
+    printf(")\n");
+}
+#else
+#define show(A,sz)
+
+#endif
 
 /* 插入法
  * */
@@ -11,9 +26,9 @@ void InsertionSort(ElementType A[], int ArrSize)
     ElementType in; // num to be inserted
 
     for(p = 1; p < ArrSize; p++) {
-        in = A[p]; /* 插入A[p]到已排序好的数组A[0 ~ p-1]中 */
+        in = A[p]; /* 把A[p]插入到已排序好的数组A[0 ~ p-1]中 */
         for(j = p; j > 0 && A[j-1] > in; j--)
-            A[j] = A[j-1]; // right shift for in
+            A[j] = A[j-1]; // right shift for insertion
         A[j] = in;
     }
 }
@@ -46,15 +61,20 @@ void ShellSort(ElementType A[], int ArrSize)
 void BubleSort(ElementType A[], int ArrSize)
 {
     int i, j, tmp;
+    bool sorted;
 
     for(i = 0; i < ArrSize - 1; i++) {
-        for(j = ArrSize - 1; j > i; j--) {
+        sorted = true;
+        for(j = ArrSize - 1; j > i; j--) { // 把最小的数"上浮"到数组前
             if(A[j] < A[j - 1]) {
                 tmp = A[j];
                 A[j] = A[j - 1];
                 A[j - 1] = tmp;
+                sorted = false;
             }
         }
+        if(sorted)
+            break;
     }
 }
 
@@ -159,11 +179,11 @@ void qsort2(int a[], int left,int right)
     i = left;
     j = right;
     pivot = a[left]; //pivot中存的就是基准数
-    index = left;
+    index = left; // 当前坑位置
 
     while(i < j)
     {
-        // 1. 顺序很重要，要先从右边开始找, 找一个小于基准的数
+        // 1. 顺序很重要，坑在左边要先从右边开始找, 找一个小于基准的数
         while(i < j) {
             if(a[j] < pivot) {
                 a[index] = a[j];
@@ -198,6 +218,45 @@ void QuickSort2(ElementType A[], int ArrSize)
     qsort2(A, 0, ArrSize-1);
 }
 
+int partition(int arr[], int left, int right)  //找基准数 划分
+{
+    int povit = arr[left];
+
+    while(left < right)
+    {
+        while (left<right && arr[left] <= povit)
+        {
+            left++;
+        }
+        while (left<right && arr[right] >= povit)
+        {
+            right--;
+        }
+        if (left < right)
+            swap(&arr[left++], &arr[right--]);
+        else
+            left++;
+    }
+    swap(&arr[right], &arr[left]);
+    return right;
+
+}
+
+void qsort3(int A[], int left, int right)
+{
+    if (left > right)
+        return;
+    int j = partition(A, left, right);
+    qsort3(A, left, j - 1);
+    qsort3(A, j + 1, right);
+}
+
+void QuickSort3(int A[], int ArrSize)
+{
+    qsort2(A, 0, ArrSize-1);
+}
+
+
 // 合并2个有序数组,分配一个临时空间，装a，b的结果，
 // 最后，将合并结果拷贝到数组A，是否临时空间
 void merge_array(int *a,int size_a,int *b, int size_b)
@@ -228,7 +287,7 @@ void merge_array(int *a,int size_a,int *b, int size_b)
     free(tmp);
 }
 
-// 归并排序
+// 归并排序 - 递归方式
 void MergeSort(ElementType A[], int ArrSize)
 {
     if(ArrSize > 1) {
@@ -264,7 +323,7 @@ void adjustHeap(ElementType A[], int i, int length)
         }
         if(A[k] > tmp) { //如果子节点大于父节点，将子节点值赋给父节点
             A[i] = A[k];
-            i = k; // 调整后，判断是否还满足大顶堆
+            i = k; // 调整后，要继续判断左子树或右子树是否还满足大顶堆
         } else {
             break;
         }
@@ -306,5 +365,65 @@ void BucketSort(ElementType A[], int ArrSize)
             BuketArray[i]--;
             j++;
         }
+    }
+}
+
+// 基数排序
+// 桶的个数为10(基)
+// 从第一位开始，把数据存放到对应桶
+#define RADIX 10
+int getBitInPos(int num, int pos)
+{
+    int i,tmp = 1;
+    for(i = 0; i < pos; i++) {
+        tmp *=10;
+    }
+    return (num/tmp) % 10;
+}
+
+void RadixSort(ElementType A[], int ArrSize)
+{
+    // 求出数组的最大值
+    int i, j, max = A[0];
+    for(i = 1; i < ArrSize; i++) {
+        if(A[i] > max)
+            max = A[i];
+    }
+
+    // 求出最大值位数
+    int maxBits = 0;
+    for(i = max; i != 0; i /= 10) {
+        maxBits++;
+    }
+
+    // 桶，为二维数组，行为基数，列为数组长度
+    int *radixArrays[RADIX]; // 基数10，0~9号桶 暂时不考虑负数情况
+    for(i=0; i < RADIX; i++) {
+        radixArrays[i] = (int*)malloc(sizeof(int) * (ArrSize + 1));
+        radixArrays[i][0] = 0; // 记录这组数据的长度
+    }
+
+    int pos, b;
+    for(pos = 0; pos < maxBits; pos++) {
+        // 分配
+        for(j = 0; j < ArrSize; j++) {
+            int num = getBitInPos(A[j], pos);
+            int index = ++radixArrays[num][0]; // 当前这组数据的长度加一
+            radixArrays[num][index] = A[j];
+        }
+
+        // 收集
+        j = 0;
+        for(b = 0; b < RADIX; b++) {
+            show(radixArrays[b], radixArrays[b][0]+1);
+            int k;
+            for(k=1; k<=radixArrays[b][0]; k++) {
+                A[j++] = radixArrays[b][k];
+            }
+            // 复位
+            radixArrays[b][0] = 0;
+        }
+        show(A, ArrSize);
+
     }
 }

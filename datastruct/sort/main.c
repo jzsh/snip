@@ -33,6 +33,7 @@ void gen_array(int A[], int size)
 {
 	int i;
 	printf("Origin array:\n");
+    srand(time(NULL));
 	for(i = 0; i < size; i++) {
 		A[i] = rand() % MAX;
 		printf("%d,", A[i]);
@@ -85,6 +86,7 @@ int main()
 						{.name = "BucketSort", .sort = BucketSort},
 						{.name = "MergeSort", .sort = MergeSort},
 						{.name = "HeapSort", .sort = HeapSort},
+						{.name = "RadixSort", .sort = RadixSort},
 	};
 
 	int A[N];
