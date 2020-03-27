@@ -18,11 +18,13 @@ static void sigint_cb (struct ev_loop *loop, ev_signal *w, int revents)
     printf("ev_async_send 调用后 %d\n",ev_async_pending(async_watcher));
 }
 
-/* receive SIGQUIT */
+/* receive SIGQUIT
+ * CTRL + \
+ * */
 static void exit_cb (struct ev_loop *loop, ev_signal *w, int revents)
 {
     printf("\nexiting ...\n");
-    sleep(2);
+    sleep(1);
     exit(0);
 }
 
@@ -68,6 +70,7 @@ static void async_callback(struct ev_loop *loop,ev_async *w,int revents)
 int
 main (void)
 {
+    printf("Press CTRL+\\ to exit\n");
     // use the default event loop unless you have special needs
     struct ev_loop *loop = EV_DEFAULT;
 

@@ -8,11 +8,14 @@
 #include<sys/socket.h>
 #include<sys/types.h>
 #include<string.h>
+
 #define PORT 9999
 #define BUFFER_SIZE 1024
+
 int total_clients=0;
 void accept_cb(struct ev_loop *loop,struct ev_io *watcher,int revents);
 void read_cb(struct ev_loop *loop,struct ev_io *watcher,int revents);
+
 int main()
 {
         struct ev_loop *loop=ev_default_loop(0);
@@ -22,18 +25,20 @@ int main()
         struct ev_io socket_accept;
 
         if((sd=socket(AF_INET,SOCK_STREAM,0))<0){
-                printf("socket error");
+                printf("socket error\n");
                 return -1;
         }
         bzero(&addr,sizeof(addr));
         addr.sin_family=AF_INET;
         addr.sin_port=htons(PORT);
         addr.sin_addr.s_addr=INADDR_ANY;
+		const int on=1;
+		setsockopt(sd,SOL_SOCKET,SO_REUSEADDR,&on,sizeof(on));
         if(bind(sd,(struct sockaddr*)&addr,sizeof(addr))!=0){
-                printf("bind error");
+                printf("bind error, port:%d\n", ntohs(addr.sin_port));
         }
         if(listen(sd,0)<0){
-                printf("listen error");
+                printf("listen error\n");
                 return -1;
         }
         ev_io_init(&socket_accept,accept_cb,sd,EV_READ);
@@ -43,27 +48,29 @@ int main()
         }
         return 0;
 }
+
 void accept_cb(struct ev_loop *loop,struct ev_io *watcher,int revents)
 {
         //struct sockaddr_in client_addr;
         int client_sd;
         struct ev_io *w_client=(struct ev_io*)malloc(sizeof(struct ev_io));
         if(EV_ERROR & revents){
-                printf("error event in accept");
+                printf("error event in accept\n");
                 return ;
         }
         //client_sd=accept(watcher->fd,(struct sockaddr *)&client_addr,&client_len);
         client_sd=accept(watcher->fd,NULL,NULL);
         if(client_sd<0){
-                printf("accept error");
+                printf("accept error\n");
                 return;
         }
         total_clients++;
-        printf("successfully connected with client.\n");
-        printf("%d client connected .\n",total_clients);
+        printf("successfully connected with client\n");
+        printf("total connetced clients: %d\n",total_clients);
         ev_io_init(w_client,read_cb,client_sd,EV_READ);
         ev_io_start(loop,w_client);
 }
+
 void read_cb(struct ev_loop *loop,struct ev_io *watcher,int revents)
 {
         char buffer[BUFFER_SIZE];
@@ -76,9 +83,8 @@ void read_cb(struct ev_loop *loop,struct ev_io *watcher,int revents)
         if(read==0){
                 ev_io_stop(loop,watcher);
                 free(watcher);
-                perror("peer might closing");
+                printf("peer might closing\n");
                 total_clients--;
-                printf("%d client connected .\n",total_clients);
                 return;
         }
         else{

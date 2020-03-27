@@ -8,51 +8,7 @@
 #include <linux/types.h>
 #include <assert.h>
 
-#define bool unsigned char
-#define true 1
-#define false 0
-
-typedef struct node{	//节点结构
-    void *data;
-    struct node *next;
-} Node;
-
-typedef struct {		//链表结构
-    struct node *head;
-    struct node *tail;
-    long len;
-} List;
-
-/* 常见链表算法 */
-
-// 初始化
-void list_init(List *list);
-// 销毁
-void list_destroy(List *list, void (*destroy)(void *));
-// 插入
-void  list_insert(List *list, void *data);
-// 头插法
-void  list_insert_at_head(List *list, void *data);
-// 随插法
-void  list_insert_at_index(List *list, void *data, long index);
-// 尾插法
-void  list_insert_at_tail(List *list, void *data);
-// 删除
-void *list_delete(List *list, void *key, int (*compare)(const void *, const void *));
-// 搜索
-void *list_search(List *list, void *key, int (*compare)(const void *, const void *));
-// 排序
-void list_sort(List *list, int (*compare)(const void *, const void *));
-// 遍历
-void  list_traverse(List *list, void (*handle)(void *));
-// 逆序
-void list_reverse(List *list);
-// 求长度
-long  get_lenth(List *list);
-// 获取链表节点
-void *list_get_element(List *list, int index);
-// 判断空链表
-bool is_empty(List *list);
+#include "singleLinkedList.h"
 
 void list_init(List *list)
 {
@@ -140,7 +96,7 @@ void list_insert(List *list, void *data)    //默认采用尾插法
 }
 
 //以key为删除关键词，compare为节点数据比较机制，由用户自己编写
-void * list_delete(List *list, void *key,
+void *list_delete(List *list, void *key,
             int (*compare)(const void *, const void *))
 {
     void *data;
@@ -174,7 +130,8 @@ void * list_delete(List *list, void *key,
     return NULL;    //没找到匹配的节点，返回NULL
 }
 
-void list_traverse(List *list, void (*handle)(void *)) //handle为节点遍历策略,由用户自己编写
+// handle()为节点遍历策略,由用户自己编写
+void list_traverse(List *list, void (*handle)(void *)) 
 {
     struct node *p;
 
@@ -272,7 +229,7 @@ void list_sort(List *list,
 
 void list_reverse(List *list)
 {
-    struct node *pre = NULL, *next, *p = list->head;
+    struct node *prev = NULL, *next, *p = list->head;
 
     list->tail = list->head;    //tail指向head；第一次head到tail的倒置。
     while(p){
@@ -280,9 +237,12 @@ void list_reverse(List *list)
         if(!next){  //当p->next为最后一个节点时，让head指向p->next；最后一次tail到head的倒置。
             list->head = p;
         }
-        //备份当前节点为pre，作为其下一个节点的next（第一个节点为NULL，初始化时已定义）；中间部分节点的倒置。
-        p->next = pre;
-        pre = p;
+
+		/* 指向前一个结点 */
+        p->next = prev;
+		/* 备份当前节点为prev，作为其下一个节点的next（第一个节点为NULL，初始化时已定义） */
+        prev = p; 
+
         p = next;
     }
 }
@@ -310,7 +270,8 @@ void *list_get_element(List *list, int idx)
     return NULL;
 }
 
-void list_destroy(List *list, void (*destroy)(void *))    //destroy为销毁链表时对节点数据的处理函数,由用户自己编写。传递NULL时表示不做处理
+// destroy为销毁链表时对节点数据的处理函数,由用户自己编写。传递NULL时表示不做处理
+void list_destroy(List *list, void (*destroy)(void *))
 {
     list->len = 0;
     struct node *n, *tmp;

@@ -1,8 +1,9 @@
 /*
 	Stack implemented by array
 */
+#include <stdlib.h>
+#include <stdio.h>
 
-#include "util.h"
 #define MinStackSize 3
 #define ElementType char
 #define EmptyTOS -1
@@ -36,15 +37,15 @@ Stack CreateStack(int MaxElements)
 {
 	Stack S;
 	if(MaxElements < MinStackSize)
-		error("Stack size is too small");
+		printf("Stack size is too small\n");
 
 	S = malloc(sizeof(struct StackRecord));
 	if(S == NULL)
-		FatalError("Out of space!!!");
+		printf("Out of space!!!\n");
 
 	S->Array = malloc(sizeof(ElementType) * MaxElements);
 	if(S == NULL)
-		FatalError("Out of sapce!!!");
+		printf("Out of sapce!!!\n");
 	S->Capacity = MaxElements;
 	MakeEmpty(S);
 
@@ -123,7 +124,8 @@ char* reverseWords(char* s)
 void main()
 {
 	char s[] = "abcdefghijklmn opq rstuvwxyz";
-	printf("%s\n", reverseWords(s));
+	printf("origin:\n%s\n", s);
+	printf("reverse:\n%s\n", reverseWords(s));
 }
 
 
