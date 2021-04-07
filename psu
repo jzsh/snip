@@ -1,0 +1,66 @@
+foreach hierItemRef in FilterResults
+{
+	handleOneHierItemRef(hierItemRef)
+}
+
+// @brief add hierItemRef to Model
+// @hierItemRef sdb item to handle
+// @return TreeItem hierItemRef对应的treeItem
+// @return isInModel hierItemRef是否已经在Model上（不管有没有在ModelHash里）
+[TreeItem,isInModel] = handleOneHierItemRef(hierItemRef)
+{
+	parentTreeItem = NULL;
+	parentIsInModel = true;
+	currIsInModel = false;
+	
+	[parentTreeItem, parentIsInModel] = GetParentTreeItem(hierItemRef);
+	
+	if(parentIsInModel) {
+		foreach(childTreeItem in parentTreeItem) {
+			if(childTreeItem is Group) {
+				...
+			}
+			else if(Match hierItemRef in childTreeItem) {
+				notify_View_to_show_this_index
+				Found = true;
+				return [childTreeItem, true]
+			}
+			InsertToHashB --> (hierItemRef, childTreeItem)
+		}
+		if(!found) {
+			// not found hierItemRef in children of parentTreeItem, need to append hierItemRef
+			create hierTreeNodeCD for hierItemRef
+			create treeItem for hierTreeNodeCD
+			InsertToHashC --> (parentTreeItem, treeItem)
+			InsertToHashA --> (hierItemRef, treeItem)
+			return [treeItem, false]
+		}
+	} else {
+		create hierTreeNodeCD for hierItemRef
+		appendRows(parentTreeItem, hierTreeNodeCD, partialAdd=true, bNotifyView=false)
+		InsertToHashA --> (hierItemRef, treeItem)
+		return [treeItem, false]
+	}
+}
+
+// @return TreeItem: hierItemRef's parent所对应的TreeItem
+// @return isInModel: TreeItem是否已经在Model上
+[TreeItem,isInModel] = GetParentTreeItem(hierItemRef)
+{
+	parentHierItemRef = hierItemRef->GetParnet();
+	if(parentHierItemRef && parentHierItemRef != virtualTop) {
+		if(Find parentHierItemRef in FilterHash)
+		{
+			return [FilterHash.value(), false]
+		}
+		
+		if(Find parentHierItemRef in ModelHash) {
+			return [ModelHash.value(), true]
+		}
+		
+		return handleOneHierItemRef(parentHierItemRef)
+	} else {
+		return [invisiableRootItem, true]
+	}
+}
+
