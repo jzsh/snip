@@ -21,7 +21,7 @@ int main()
     HEADER h;
     h.valid = true;
 
-    cout << "HEADER size:" << sizeof(HEADER) <<endl;
+    cout << "HEADER size:" << sizeof(HEADER) << "bytes" << endl;
 
     return 0;
 }
