@@ -4,9 +4,21 @@
 #include <tbb/task_group.h>
 #include <tbb/global_control.h>
 #include <tbb/concurrent_vector.h>
+#include <tbb/concurrent_unordered_set.h>
 #include <thread>
+#include <stdarg.h>
 
 using namespace std;
+
+void print(const char* format, ...)
+{
+    printf("[%ld]", pthread_self());
+    va_list ap;
+    va_start(ap, format);
+    vprintf(format, ap);
+    printf("\n");
+    va_end(ap);
+}
 
 void test2()
 {
@@ -18,24 +30,28 @@ void test2()
 //     });
     // tbb::global_control gc(tbb::global_control::max_allowed_parallelism, 8);
 
-    tbb::task_arena arena(2);
+    tbb::task_arena arena(1);
     tbb::task_group group;
     tbb::concurrent_vector<int> numVec;
+    tbb::concurrent_unordered_set<size_t> pidSet;
 
-    cout << "task_arena num: " << arena.max_concurrency() << endl;
+    print("task_arena num: %d", arena.max_concurrency());
     bool running = false;
-    arena.execute([&](){
-//     arena.enqueue([&](){
+    arena.execute([&](){    // lamda run in master thread
+//     arena.enqueue([&](){ // lamda run in worker thread
         running = true;
-        cout << "run in task arena" << endl;
+        print("run in task arena");
         group.run([&](){
+            print("run in task group");
             tbb::parallel_for(0, 100, [&](int& i){
-                cout << "run in group" << endl;
+                print("run in group");
                 numVec.push_back(i);
                 std::this_thread::sleep_for(10ms);
+                pidSet.insert(pthread_self());
             });
+            print("out of task group");
         });
-        cout << "out of task arena" << endl;
+        print("out of task arena");
     });
 
 //     while(1) {
@@ -44,9 +60,9 @@ void test2()
     while(!running) {
         std::this_thread::sleep_for(100ms);
     }
-    cout << "before wait" << endl;
+    print("before wait");
     group.wait();
-    cout << "after wait" << endl;
+    print("after wait");
 }
 
 int main()
