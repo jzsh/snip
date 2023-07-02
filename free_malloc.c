@@ -6,7 +6,7 @@ struct human {
 	char name[64];
 };
 typedef struct human human_t;
-void main()
+int main()
 {
 	char *test = NULL;
 	free(test);

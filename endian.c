@@ -6,11 +6,11 @@ int main(void)
        pointer = (unsigned char *)&i;
        if(*pointer)
        {
-              printf("little_endian");
+              printf("little_endian\n");
        }
        else
        {
-              printf("big endian/n");
+              printf("big endian\n");
        }
        return 0;
 }

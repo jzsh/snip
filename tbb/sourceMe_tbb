@@ -1,0 +1,1 @@
+export LD_LIBRARY_PATH=/home/gjz/depot/tbb_2018/lib:$LD_LIBRARY_PATH
